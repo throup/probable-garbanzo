@@ -17,6 +17,15 @@ lazy val protobuf = (project in file("protobuf"))
     shared,
     name := "protobuf",
     description := "Protocol Buffer definitions",
+
+    libraryDependencies ++= Seq(
+      "io.grpc" % "grpc-netty" % scalapb.compiler.Version.grpcJavaVersion,
+      "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapb.compiler.Version.scalapbVersion
+    ),
+
+    Compile / PB.targets := Seq(
+      scalapb.gen() -> (Compile / sourceManaged).value / "scalapb"
+    )
   )
 
 lazy val service = (project in file("prime-number-server"))

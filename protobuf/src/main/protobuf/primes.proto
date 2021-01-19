@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package eu.throup;
+
+service NextPrimeAfterService {
+  rpc NextPrimeAfter(NextPrimeAfterRequest) returns (NextPrimeAfterResponse);
+}
+message NextPrimeAfterRequest {
+  int32 previous = 1;
+}
+message NextPrimeAfterResponse {
+  int32 next = 1;
+}
