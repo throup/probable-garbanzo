@@ -17,4 +17,15 @@ package object prime_number_server {
     math.sqrt(i + 1)
       .ceil
       .intValue
+
+  def nextPrimeAfter(i: Int): Int = {
+    // We cannot evaluate numbers beyond this value
+    if (i == Int.MaxValue)
+      throw new IllegalArgumentException
+
+    // Save a little time by beginning no lower than the smallest prime (2)
+    LazyList.from(math.max(2, i + 1))
+      .find(isPrime)
+      .get
+  }
 }
