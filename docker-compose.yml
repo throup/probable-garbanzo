@@ -1,0 +1,18 @@
+version: "3.9"
+services:
+  service:
+    environment:
+      PRIME_SERVICE_HOST: "service"
+      PRIME_SERVICE_PORT: 9999
+    image: "prime-number-server:0.1"
+    ports:
+      - "9999:9999"
+  proxy:
+    environment:
+      PRIME_SERVICE_HOST: "service"
+      PRIME_SERVICE_PORT: 9999
+      PRIME_PROXY_HOST: "0.0.0.0"
+      PRIME_PROXY_PORT: 8080
+    image: "proxy-service:0.1"
+    ports:
+      - "8080:8080"

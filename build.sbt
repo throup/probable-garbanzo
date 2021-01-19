@@ -1,4 +1,7 @@
 import sbt.Keys.{libraryDependencies, logBuffered}
+import scala.sys.process._
+
+enablePlugins(DockerPlugin)
 
 val shared = Seq(
   organization := "eu.throup.primes",
@@ -42,6 +45,7 @@ lazy val service = (project in file("prime-number-server"))
     logBuffered in Test := false,
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
   )
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(protobuf)
 
 lazy val proxy = (project in file("proxy-service"))
@@ -59,6 +63,7 @@ lazy val proxy = (project in file("proxy-service"))
     logBuffered in Test := false,
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
   )
+  .enablePlugins(JavaAppPackaging)
   .dependsOn(protobuf)
 
 lazy val integration = (project in file("integration"))
@@ -74,3 +79,16 @@ lazy val integration = (project in file("integration"))
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
   )
   .dependsOn(service, proxy)
+
+lazy val dockerBuild = taskKey[Unit]("builds Docker containers for the primes service and proxy")
+dockerBuild := {
+  (service / Docker / publishLocal ).value
+  (proxy   / Docker / publishLocal ).value
+}
+
+lazy val dockerRun = taskKey[Unit]("run the primes service and proxy in a Docker environment")
+dockerRun := {
+  "docker-compose up" !
+}
+
+dockerRun := (dockerRun dependsOn dockerBuild).value
