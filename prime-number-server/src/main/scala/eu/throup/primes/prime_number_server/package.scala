@@ -1,8 +1,13 @@
 package eu.throup
 package primes
 
+import com.typesafe.scalalogging.Logger
+
 package object prime_number_server {
+  private val Log = Logger(this.getClass)
+
   def isPrime(i: Int): Boolean = {
+    Log.info("isPrime({})", i)
     if (i < 2)
       false
     else
@@ -19,6 +24,8 @@ package object prime_number_server {
       .intValue
 
   def nextPrimeAfter(i: Int): Int = {
+    Log.info("nextPrimeAfter({})", i)
+
     // We cannot evaluate numbers beyond this value
     if (i == Int.MaxValue)
       throw new IllegalArgumentException

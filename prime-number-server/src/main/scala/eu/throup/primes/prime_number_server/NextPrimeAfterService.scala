@@ -5,7 +5,8 @@ package prime_number_server
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
-class NextPrimeAfterService(private val function: Int => Int) extends NextPrimeAfterServiceGrpc.NextPrimeAfterService {
+class
+NextPrimeAfterService(private val function: Int => Int) extends NextPrimeAfterServiceGrpc.NextPrimeAfterService {
   /**
    * The "real" default constructor.
    *
@@ -14,9 +15,7 @@ class NextPrimeAfterService(private val function: Int => Int) extends NextPrimeA
    * production code, but a mock function can be passed to the primary
    * constructor for testing purposes.
    */
-  def this() = {
-    this(prime_number_server.nextPrimeAfter)
-  }
+  def this() = this(prime_number_server.nextPrimeAfter)
 
   override def nextPrimeAfter(request: NextPrimeAfterRequest): Future[NextPrimeAfterResponse] =
     Future {

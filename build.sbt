@@ -1,3 +1,5 @@
+import sbt.Keys.logBuffered
+
 val shared = Seq(
   organization := "eu.throup.primes",
   version := "0.1",
@@ -36,7 +38,9 @@ lazy val service = (project in file("prime-number-server"))
     libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
     libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.2",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % Test
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % Test,
+    logBuffered in Test := false,
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
   )
   .dependsOn(protobuf)
 
@@ -52,5 +56,7 @@ lazy val proxy = (project in file("proxy-service"))
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.2",
     libraryDependencies += "org.scalamock" %% "scalamock" % "5.1.0" % Test,
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % Test,
+    logBuffered in Test := false,
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
   )
   .dependsOn(protobuf)
