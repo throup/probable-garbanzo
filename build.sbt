@@ -1,4 +1,4 @@
-import sbt.Keys.logBuffered
+import sbt.Keys.{libraryDependencies, logBuffered}
 
 val shared = Seq(
   organization := "eu.throup.primes",
@@ -7,12 +7,12 @@ val shared = Seq(
 )
 
 lazy val root = (project in file("."))
-  .aggregate(protobuf, service, proxy)
+  .aggregate(protobuf, service, proxy, integration)
   .settings(
     shared,
     name := "primes",
   )
-  .dependsOn(service, proxy)
+  .dependsOn(service, proxy, integration)
 
 lazy val protobuf = (project in file("protobuf"))
   .settings(
@@ -60,3 +60,17 @@ lazy val proxy = (project in file("proxy-service"))
     testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
   )
   .dependsOn(protobuf)
+
+lazy val integration = (project in file("integration"))
+  .settings(
+    shared,
+    name := "integration",
+    description := "Integration tests for primes service and proxy",
+    libraryDependencies += "io.rest-assured" % "scala-support" % "4.3.3",
+    libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.2",
+    libraryDependencies += "org.scalamock" %% "scalamock" % "5.1.0" % Test,
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % Test,
+    logBuffered in Test := false,
+    testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-W", "120", "60")
+  )
+  .dependsOn(service, proxy)

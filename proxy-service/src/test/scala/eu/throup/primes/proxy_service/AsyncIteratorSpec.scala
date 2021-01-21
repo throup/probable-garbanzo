@@ -40,14 +40,15 @@ class AsyncIteratorSpec extends AnyFreeSpec {
       "action in separate threads" in {
         var iterator = new AsyncIterator[Int]()
 
-        new Thread {
+        val thread = new Thread {
           override def run {
             iterator.onNext(4)
             iterator.onNext(5)
             iterator.onNext(6)
             iterator.onCompleted()
           }
-        }.start
+        }
+        thread.start
 
         iterator.hasNext should be(true)
         iterator.next should be(4)
@@ -56,6 +57,9 @@ class AsyncIteratorSpec extends AnyFreeSpec {
         iterator.hasNext should be(true)
         iterator.next should be(6)
         iterator.hasNext should be(false)
+
+        thread.join(2000)
+        succeed
       }
     }
 
@@ -77,15 +81,19 @@ class AsyncIteratorSpec extends AnyFreeSpec {
       "rethrows exception passed to onError()" in {
         var iterator = new AsyncIterator[Int]()
 
-        new Thread {
+        val thread = new Thread {
           override def run {
             iterator.onNext(1)
             iterator.onError(new Exception("I was just thrown"))
           }
-        }.run
+        }
+        thread.run
 
         the [Exception] thrownBy iterator.hasNext should have message "I was just thrown"
         the [Exception] thrownBy iterator.next should have message "I was just thrown"
+
+        thread.join(2000)
+        succeed
       }
     }
   }
