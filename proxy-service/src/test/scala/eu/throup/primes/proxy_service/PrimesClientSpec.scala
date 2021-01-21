@@ -36,7 +36,7 @@ class PrimesClientSpec extends AsyncFreeSpec with AsyncMockFactory {
         val (grpc, client) = freshFixture
 
         mockResponse(grpc, 0, 2)
-        mockResponse(grpc, 2, 3)
+        mockResponse(grpc, 2, 3).noMoreThanOnce()
 
         val iterator = client.allPrimesTo(9)
 
@@ -49,7 +49,7 @@ class PrimesClientSpec extends AsyncFreeSpec with AsyncMockFactory {
         val (grpc, client) = freshFixture
 
         mockResponse(grpc, 0, 2)
-        mockResponse(grpc, 2, 3)
+        mockResponse(grpc, 2, 3).noMoreThanOnce()
         mockResponse(grpc, 3, 5).never()
         mockResponse(grpc, 5, 7).never()
         mockResponse(grpc, 7, 11).never()
