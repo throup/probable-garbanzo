@@ -33,8 +33,10 @@ lazy val service = (project in file("prime-number-server"))
     shared,
     name := "prime-number-server",
     description := "Service for generating sequences of prime numbers",
+    libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
+    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.2",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % "test"
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % Test
   )
   .dependsOn(protobuf)
 
@@ -43,7 +45,10 @@ lazy val proxy = (project in file("proxy-service"))
     shared,
     name := "proxy-service",
     description := "Gateway proxy providing REST access to the primes service",
+    libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3",
+    libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2",
     libraryDependencies += "org.scalactic" %% "scalactic" % "3.2.2",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % "test"
+    libraryDependencies += "org.scalamock" %% "scalamock" % "5.1.0" % Test,
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.2" % Test,
   )
   .dependsOn(protobuf)
