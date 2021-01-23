@@ -1,0 +1,32 @@
+@startuml
+actor user
+boundary REST
+participant "proxy-server" as proxy
+boundary gRPC
+participant "prime-number-server" as service
+
+user -> proxy ++ : GET /prime/9
+
+proxy -> service ++ : nextPrimeAfter(0)
+proxy <-- service -- : 2
+
+proxy -> service ++ : nextPrimeAfter(2)
+user <-- proxy : 2
+proxy <-- service -- : 3
+
+proxy -> service ++ : nextPrimeAfter(3)
+user <-- proxy : ,3
+proxy <-- service -- : 5
+
+proxy -> service ++ : nextPrimeAfter(5)
+user <-- proxy : ,5
+proxy <-- service -- : 7
+
+proxy -> service ++ : nextPrimeAfter(7)
+user <-- proxy : ,7
+proxy <-- service -- : 11
+
+note over proxy: 11 > 9
+
+user <-- proxy -- : .
+@enduml

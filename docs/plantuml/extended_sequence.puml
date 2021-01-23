@@ -1,0 +1,53 @@
+@startuml
+actor user
+boundary REST
+box "proxy-server"
+  participant AllPrimesController as controller
+  participant AsyncIterator as iterator
+  participant PrimesClient as client
+end box
+boundary gRPC
+participant "prime-number-server" as service
+
+user -> controller ++ : GET /prime/6
+controller -> client ++ : allPrimesTo(6)
+client -> service ++ : nextPrimeAfter(0)
+controller <-- client -- : returns iterator
+controller -> iterator ++ : hasNext()
+client <-- service -- : 2
+iterator <- client ++ : onNext(2)
+iterator --> client --
+client -> service ++ : nextPrimeAfter(2)
+controller <-- iterator -- : true
+controller -> iterator ++ : next()
+controller <-- iterator -- : 2
+user <-- controller : 2
+
+controller -> iterator ++ : hasNext()
+client <-- service -- : 3
+iterator <- client ++ : onNext(3)
+iterator --> client --
+client -> service ++ : nextPrimeAfter(3)
+controller <-- iterator -- : true
+controller -> iterator ++ : next()
+controller <-- iterator -- : 3
+user <-- controller : ,3
+
+controller -> iterator ++ : hasNext()
+client <-- service -- : 5
+iterator <- client ++ : onNext(5)
+iterator --> client --
+client -> service ++ : nextPrimeAfter(5)
+controller <-- iterator -- : true
+controller -> iterator ++ : next()
+controller <-- iterator -- : 5
+user <-- controller : ,5
+
+controller -> iterator ++ : hasNext()
+client <-- service -- : 7
+note over client: 7 > 6
+iterator <- client ++ : onCompleted()
+iterator --> client --
+controller <-- iterator -- : false
+user <-- controller -- : .
+@enduml

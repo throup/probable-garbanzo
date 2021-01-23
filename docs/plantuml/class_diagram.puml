@@ -1,0 +1,100 @@
+@startuml
+package cats.effect {
+  interface IOApp << (T,skyblue) >> {
+    run(List[String])
+  }
+}
+
+package io.grpc {
+  class Server {
+    start()
+    awaitTermination()
+  }
+
+  interface StreamObserver<T> {
+    onNext(T)
+    onError(Throwable)
+    onCompleted()
+  }
+}
+
+package org.http4s.server.blaze {
+  class BlazeServerBuilder
+}
+
+package scala {
+  interface App << (T,skyblue) >>
+}
+
+package scala.collection {
+  interface Iterator<T> << (T,skyblue) >> {
+    hasNext()
+    next()
+  }
+}
+
+package eu.throup.org.primes {
+    interface "NextPrimeAfterService (protobuf)" << (T,skyblue) >> {
+      nextPrimeAfter(NextPrimeAfterRequest)
+    }
+
+    package proxy_service {
+        class PrimesClient {
+          nextPrimeAfter(Int)
+          allPrimesTo(Int)
+        }
+
+        class AllPrimesController {
+          apply(Int)
+        }
+
+        class HttpApp
+
+        class AsyncIterator<T>
+        AsyncIterator ..|> StreamObserver
+        AsyncIterator ..|> Iterator
+
+        class "Main (proxy)" << (O,hotpink) >>
+        "Main (proxy)" .|> IOApp
+    }
+
+    package prime_number_server {
+      class "GrpcServer" << (O,hotpink) >> {
+        apply(ServerServiceDefinition)
+      }
+
+      class nextPrimeAfter << (f,green) >> {
+        nextPrimeAfter(Int)
+      }
+
+      class isPrime << (f,green) >> {
+        isPrime(Int)
+      }
+
+      class NextPrimeAfterService
+      NextPrimeAfterService ..|> "NextPrimeAfterService (protobuf)"
+
+      class "Main (service)" << (O,hotpink) >>
+      App <|. "Main (service)"
+    }
+}
+
+"Main (proxy)" ..> HttpApp : executes
+"Main (proxy)" ...> BlazeServerBuilder : controls
+AllPrimesController -* HttpApp
+AllPrimesController *- PrimesClient
+PrimesClient *- "NextPrimeAfterService (protobuf)"
+
+"Main (service)" ..> GrpcServer : executes
+GrpcServer *- NextPrimeAfterService
+GrpcServer ..> Server : controls
+NextPrimeAfterService ..> nextPrimeAfter : executes
+nextPrimeAfter .> isPrime
+
+AllPrimesController ..> Iterator : consumes
+PrimesClient ..> AsyncIterator : returns
+PrimesClient ..> StreamObserver : populates
+
+hide members
+show methods
+@enduml
