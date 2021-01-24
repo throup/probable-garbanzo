@@ -47,6 +47,8 @@ sbt service/run
 sbt proxy/run
 ```
 
+With the default options, the proxy server can be reached at http://localhost:8080/prime/123 (replace `123` with the desired target).
+
 ```bash
 # configure available options
 PRIME_SERVICE_HOST="service" \ # address to contact prime-number-server
